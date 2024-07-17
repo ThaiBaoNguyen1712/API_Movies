@@ -1,4 +1,5 @@
 ﻿using API_Movies.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace API_Movies.Controllers
 {
     [Route("/Country")]
     [ApiController]
+    [Authorize]
     public class CountriesController : Controller
     {
         private readonly MoviesDbContext _moviesDbContext;
@@ -21,7 +23,7 @@ namespace API_Movies.Controllers
             return await _moviesDbContext.Countries.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("by-id/{id}")]
         public async Task<ActionResult<Country>> getByID(int id)
         {
             var country = await _moviesDbContext.Countries
@@ -34,7 +36,7 @@ namespace API_Movies.Controllers
 
             return country;
         }
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult<Country>> Create(Country country)
         {
             if(country ==null) { return BadRequest(); }
@@ -50,7 +52,7 @@ namespace API_Movies.Controllers
             return Ok(country);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<ActionResult<Country>> Update(int id, Country country)
         {
             var coun = await _moviesDbContext.Countries.FirstOrDefaultAsync(x=>x.Id == id);
@@ -72,7 +74,7 @@ namespace API_Movies.Controllers
             }
             return Ok(coun);
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<Country>> Delete(int id)
         {
             var country = await _moviesDbContext.Countries.FirstOrDefaultAsync(x => x.Id == id);

@@ -1,4 +1,5 @@
 ﻿using API_Movies.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace API_Movies.Controllers
 {
     [Route("/Genre")]
     [ApiController]
+    [Authorize]
     public class GenresController : Controller
     {
         private readonly MoviesDbContext _moviesDbContext;
@@ -20,7 +22,7 @@ namespace API_Movies.Controllers
             return await _moviesDbContext.Genres.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("by-id/{id}")]
         public async Task<ActionResult<Genre>> getByID(int id)
         {
             var genre = await _moviesDbContext.Genres
@@ -35,7 +37,7 @@ namespace API_Movies.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult<Genre>> Create(Genre genre)
         {
             _moviesDbContext.Add(genre);
@@ -51,7 +53,7 @@ namespace API_Movies.Controllers
         }
 
 
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<ActionResult<Genre>> Update(int id, Genre genre)
         {
             var gen = await _moviesDbContext.Genres.FirstOrDefaultAsync(x => x.Id == id);
@@ -76,7 +78,7 @@ namespace API_Movies.Controllers
 
             
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<Genre>> DeleteGenre(int id)
         {
             var genre = await _moviesDbContext.Genres.FirstOrDefaultAsync(x => x.Id == id);

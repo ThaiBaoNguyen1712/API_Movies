@@ -13,9 +13,15 @@ public partial class User
 
     public DateTime? EmailVerifiedAt { get; set; }
 
+    public int? IsVerified { get; set; }
+
+    public Guid? VerificationCode { get; set; }
+
     public string Password { get; set; } = null!;
 
     public string? RememberToken { get; set; }
+
+    public string? Role { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

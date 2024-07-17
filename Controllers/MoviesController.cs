@@ -9,7 +9,7 @@ using Microsoft.VisualBasic;
 
 namespace API_Movies.Controllers
 {
-    [Route("/Phim")]
+    [Route("/Movie")]
     [ApiController]
     public class MoviesController : Controller
     {
@@ -19,14 +19,20 @@ namespace API_Movies.Controllers
         {
             _moviesDbContext = moviesDbContext;
         }
- 
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies([FromQuery] int page = 1, [FromQuery] int pagesize =20)
         {
-            return await _moviesDbContext.Movies.Take(20).ToListAsync();
+            if(page <=0  || pagesize <=0)
+            {
+                return BadRequest();
+            }
+
+            return await _moviesDbContext.Movies.Skip((page -1) * pagesize).Take(pagesize).ToListAsync();
         }
    
         [HttpGet("by-id/{id}")]
+        [Authorize]
         public async Task<ActionResult<Movie>> GetMovie_ByID(int id)
         {
             var movie = await _moviesDbContext.Movies
@@ -175,9 +181,9 @@ namespace API_Movies.Controllers
         }
 
 
-        [Route("private_add")]
-        [HttpPost]
-        public async Task<ActionResult<Movie>> CreateMovie(Movie movie)
+        [HttpPost("Create")]
+        [Authorize]
+        public async Task<ActionResult<Movie>> Create(Movie movie)
         {
             if (movie == null)
             {
@@ -186,7 +192,8 @@ namespace API_Movies.Controllers
 
             try
             {
-                movie.CreateAt = Convert.ToString(DateTime.Now);
+                movie.CreateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                movie.UpdateAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 _moviesDbContext.Movies.Add(movie);
 
                 foreach(var cate in movie.MovieCategories)
@@ -210,7 +217,8 @@ namespace API_Movies.Controllers
             // Return the created movie
             return CreatedAtAction(nameof(GetMovie_ByID), new { id = movie.Id }, movie);
         }
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
+        [Authorize]
         public async Task<ActionResult<Movie>> Update(int id,Movie movie)
         {
             var mov =  await _moviesDbContext.Movies.FirstOrDefaultAsync(x => x.Id == id);
@@ -276,8 +284,7 @@ namespace API_Movies.Controllers
             return Ok(mov);
         }
         [Authorize]
-        [Route("private_remove/{id}")]
-        [HttpDelete]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<Movie>> DeleteMovie(int id)
         {
             var movie = await _moviesDbContext.Movies

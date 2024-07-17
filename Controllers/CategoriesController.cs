@@ -1,4 +1,5 @@
 ﻿using API_Movies.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ namespace API_Movies.Controllers
 {
     [Route("/Category")]
     [ApiController]
+    [Authorize]
 
     public class CategoriesController : Controller
     {
@@ -25,8 +27,7 @@ namespace API_Movies.Controllers
             var categories = await _moviesDbContext.Categories.ToListAsync();
             return categories;
         }
-
-        [HttpGet("{id}")]
+        [HttpGet("by-id/{id}")]
         public async Task<ActionResult<Category>> getByID(int id)
         {
             var cate = await _moviesDbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
@@ -36,7 +37,7 @@ namespace API_Movies.Controllers
             }
             return cate;
         }
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult<Category>> Create(Category category)
         {
             try
@@ -50,7 +51,7 @@ namespace API_Movies.Controllers
             }
             return Ok(category);
         }
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<ActionResult<Category>> Update(int id, Category category)
         {
             var cate = await _moviesDbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
@@ -77,7 +78,7 @@ namespace API_Movies.Controllers
 
             return Ok(cate);
         }
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<Category>> Delete(int id)
         {
             var cate = await _moviesDbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);

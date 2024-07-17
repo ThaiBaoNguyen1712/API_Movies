@@ -4,6 +4,8 @@ using API_Movies.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using API_Movies.Helpers;
+using API_Movies.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,12 @@ builder.Services.AddDbContext<MoviesDbContext>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+//Add Email Services
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 
 var app = builder.Build();
 

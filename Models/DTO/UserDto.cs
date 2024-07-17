@@ -1,4 +1,4 @@
-﻿namespace API_Movies.Models
+﻿namespace API_Movies.Models.DTO
 {
     public class UserDto
     {
